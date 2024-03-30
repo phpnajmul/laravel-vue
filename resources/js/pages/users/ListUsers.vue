@@ -1,4 +1,20 @@
 <script setup>
+    import axios from "axios";
+    import {onMounted, ref} from "vue";
+
+    const users = ref([]);
+
+   const getUsers = async () => {
+      await axios.get('/api/users')
+         .then((response) => {
+             users.value = response.data;
+         });
+   }
+
+   onMounted(() =>{
+       getUsers();
+   });
+
 
 </script>
 
@@ -22,7 +38,32 @@
 
     <div class="content">
         <div class="container-fluid">
-
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Registered Date</th>
+                                <th>Role</th>
+                                <th>Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(user, index) in users" :key="user.id">
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>30-03-2024</td>
+                                <td>Admin</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
     </div>
