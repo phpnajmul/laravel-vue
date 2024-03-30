@@ -10,8 +10,10 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@vitejs/plugin-vue": "^4.0.0",
         "admin-lte": "3.2",
         "husky": "^9.0.11",
-        "vue": "^3.4.21"
+        "vue": "^3.4.21",
+        "vue-router": "^4.3.0"
     }
 }
