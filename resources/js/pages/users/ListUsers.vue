@@ -17,14 +17,22 @@
          });
    }
 
-   const schema = yup.object({
+   const createUserSchema = yup.object({
        name : yup.string().required(),
        email : yup.string().email().required(),
        password : yup.string().required().min(8),
    });
 
+   const editUserSchema = yup.object({
+       name : yup.string().required(),
+       email : yup.string().email().required(),
+       password: yup.string().when((password, schema) => {
+          return password ? schema.min(8) : schema;
+       }),
+   });
 
-   const createUser = (values, {resetForm}) => {
+
+   const createUser = values => {
        axios.post('/api/users', values)
            .then((response) => {
                users.value.unshift(response.data);
@@ -48,6 +56,27 @@
         };
 
     };
+
+    const updateUser = (values) => {
+        axios.put('/api/users/' + formValues.value.id, values)
+            .then((response) => {
+                const index = users.value.findIndex(user => user.id === response.data.id);
+                users.value[index] = response.data;
+                $('#userFormModal').modal('hide');
+            }).catch((error) => {
+                console.log(error)
+        }).finally(()=>{
+            form.value.resetForm();
+        });
+    };
+
+    const handleSubmit = (values) => {
+        if (editing.value){
+            updateUser(values);
+        }else {
+            createUser(values);
+        }
+    }
 
 
    onMounted(() =>{
@@ -101,7 +130,7 @@
                                 <td>{{ user.email }}</td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td><a href="#" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a></td>
+                                <td><a href="#" title="Edit" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -125,7 +154,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <Form ref="form" @submit="createUser" :validation-schema="schema" v-slot="{errors}"  :initial-values="formValues">
+                <Form ref="form" @submit="handleSubmit" :validation-schema="editing? editUserSchema : createUserSchema" v-slot="{errors}"  :initial-values="formValues">
                     <div class="modal-body">
                             <div class="form-group">
                                 <label for="name">Name</label>
