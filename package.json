@@ -13,7 +13,10 @@
         "@vitejs/plugin-vue": "^4.0.0",
         "admin-lte": "3.2",
         "husky": "^9.0.11",
+        "jquery": "^3.7.1",
+        "vee-validate": "^4.12.6",
         "vue": "^3.4.21",
-        "vue-router": "^4.3.0"
+        "vue-router": "^4.3.0",
+        "yup": "^1.4.0"
     }
 }
