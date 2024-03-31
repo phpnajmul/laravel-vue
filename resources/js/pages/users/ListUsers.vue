@@ -1,32 +1,53 @@
 <script setup>
     import axios from "axios";
-    import {onMounted, reactive, ref} from "vue";
+    import {onMounted, ref} from "vue";
+    import {Form, Field} from 'vee-validate';
+    import * as yup from "yup";
 
     const users = ref([]);
+    const editing = ref(false);
+    const formValues = ref();
+    const form = ref(null);
 
-    const form = reactive({
-        name : '',
-        email : '',
-        password : '',
-    });
 
-   const getUsers = async () => {
-      await axios.get('/api/users')
+   const getUsers = () => {
+       axios.get('/api/users')
          .then((response) => {
              users.value = response.data;
          });
    }
 
-   const createUser = () => {
-       axios.post('/api/users', form)
+   const schema = yup.object({
+       name : yup.string().required(),
+       email : yup.string().email().required(),
+       password : yup.string().required().min(8),
+   });
+
+
+   const createUser = (values, {resetForm}) => {
+       axios.post('/api/users', values)
            .then((response) => {
                users.value.unshift(response.data);
-               form.name = '';
-               form.email = '';
-               form.password = '';
-               $('#createUserModal').modal('hide');
-           })
-   }
+               $('#userFormModal').modal('hide')
+               resetForm();
+           });
+   };
+
+   const addUser = () => {
+       editing.value = false;
+       $('#userFormModal').modal('show');
+   };
+    const editUser = (user) => {
+        editing.value = true;
+        form.value.resetForm();
+       $('#userFormModal').modal('show');
+        formValues.value = {
+            id : user.id,
+            name : user.name,
+            email : user.email,
+        };
+
+    };
 
 
    onMounted(() =>{
@@ -57,7 +78,7 @@
     <div class="content">
         <div class="container-fluid">
             <!-- Button trigger modal -->
-                <button type="button" class="mb-2 btn btn-primary" data-toggle="modal" data-target="#createUserModal">
+                <button type="button" @click="addUser" class="mb-2 btn btn-primary">
                     Add New User
                 </button>
             <div class="card">
@@ -78,9 +99,9 @@
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>30-03-2024</td>
-                                <td>Admin</td>
                                 <td>-</td>
+                                <td>-</td>
+                                <td><a href="#" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -91,42 +112,49 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="createUserModal" data-backdrop="static" tabindex="-1" role="dialog"
+    <div class="modal fade" id="userFormModal" data-backdrop="static" tabindex="-1" role="dialog"
          aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Add New User</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">
+                        <span v-if="editing">Edit User</span>
+                        <span v-else>Add New User</span>
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form autocomplete="off">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input v-model="form.name" type="text" class="form-control " id="name"
-                                   aria-describedby="nameHelp" placeholder="Enter full name">
-                        </div>
+                <Form ref="form" @submit="createUser" :validation-schema="schema" v-slot="{errors}"  :initial-values="formValues">
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <Field name="name" type="text" class="form-control " :class="{'is-invalid':errors.name}" id="name"
+                                       aria-describedby="nameHelp" placeholder="Enter full name"/>
+                                <span class="invalid-feedback">{{ errors.name }}</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <Field name="email" type="email" class="form-control " :class="{'is-invalid':errors.email}" id="email"
+                                       aria-describedby="nameHelp" placeholder="Enter full name"/>
+                                <span class="invalid-feedback">{{ errors.email }}</span>
+                            </div>
 
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input v-model="form.email" type="email" class="form-control " id="email"
-                                   aria-describedby="nameHelp" placeholder="Enter full name">
+                            <label for="password">Password</label>
+                            <Field name="password" type="password" class="form-control " :class="{'is-invalid':errors.password}" id="password"
+                                   aria-describedby="nameHelp" placeholder="Enter password"/>
+                            <span class="invalid-feedback">{{ errors.password }}</span>
                         </div>
-                    </form>
-
-                    <div class="form-group">
-                        <label for="email">Password</label>
-                        <input v-model="form.password" type="password" class="form-control " id="password"
-                               aria-describedby="nameHelp" placeholder="Enter password">
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button @click="createUser" type="button" class="btn btn-primary">Save</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </Form>
             </div>
+
         </div>
     </div>
 </template>
