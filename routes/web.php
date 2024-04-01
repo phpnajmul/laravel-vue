@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::get('csrf', function () {
+    return csrf_token();
+});
+
+
 Route::get('/', function () {
     return view('welcome');
 });
