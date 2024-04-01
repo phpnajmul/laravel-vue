@@ -3,7 +3,9 @@
     import {onMounted, ref} from "vue";
     import {Form, Field} from 'vee-validate';
     import * as yup from "yup";
+    import { useToastr } from "@/toastr";
 
+    const toastr = useToastr();
     const users = ref([]);
     const editing = ref(false);
     const formValues = ref();
@@ -38,6 +40,7 @@
                users.value.unshift(response.data);
                $('#userFormModal').modal('hide')
                resetForm();
+               toastr.success('User created successfully!')
            })
            .catch((error) => {
                if (error.response.data.errors){
@@ -68,6 +71,7 @@
                 const index = users.value.findIndex(user => user.id === response.data.id);
                 users.value[index] = response.data;
                 $('#userFormModal').modal('hide');
+                toastr.success('User updated successfully!')
             }).catch((error) => {
             setErrors(error.response.data.errors)
         })
