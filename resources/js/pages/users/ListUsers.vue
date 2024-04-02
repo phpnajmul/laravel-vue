@@ -4,6 +4,7 @@ import axios from "axios";
 import { Field, Form } from "vee-validate";
 import { onMounted, ref } from "vue";
 import * as yup from "yup";
+import {formatDate} from "@/helper";
 
 const toastr = useToastr();
 const users = ref([]);
@@ -149,8 +150,8 @@ onMounted(() => {
                                 <td>{{ index + 1 }}</td>
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td>{{ formatDate(user.created_at) }}</td>
+                                <td>{{ user.role }}</td>
                                 <td>
                                     <a href="#" title="Edit" @click.prevent="editUser(user)"><i class="fa fa-edit"></i></a>
                                     <a href="#" title="Edit" @click.prevent="confirmUserDeletion(user)"><i class="fa fa-trash text-danger ml-2"></i></a>

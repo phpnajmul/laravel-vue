@@ -14,6 +14,7 @@
         "admin-lte": "3.2",
         "husky": "^9.0.11",
         "jquery": "^3.7.1",
+        "moment": "^2.30.1",
         "vee-validate": "^4.6.9",
         "vue": "^3.4.21",
         "vue-router": "^4.3.0",
