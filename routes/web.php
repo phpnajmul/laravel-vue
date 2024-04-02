@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('csrf', function () {
-    return csrf_token();
-});
+// Route::get('csrf', function () {
+//     return csrf_token();
+// });
 
 
 Route::get('/', function () {
@@ -32,6 +32,7 @@ Route::get('/', function () {
 Route::get('/api/users', [UserController::class, 'index']);
 Route::post('/api/users', [UserController::class, 'store']);
 Route::put('/api/users/{user}', [UserController::class, 'update']);
+Route::delete('/api/users/{user}', [UserController::class, 'destroy']);
 
 
 

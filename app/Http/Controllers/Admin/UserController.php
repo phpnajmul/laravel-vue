@@ -11,9 +11,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::latest()->get();
-
         return $users;
-
     }
 
     public function store()
@@ -48,8 +46,16 @@ class UserController extends Controller
 
         return $user;
     }
-    
-    
+
+    public function destroy(User $user)
+    {
+        //dd($user);
+        $user->delete();
+        return response()->noContent();
+    }
+
+
+
 
 
 }
