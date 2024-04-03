@@ -187,6 +187,8 @@ onMounted(() => {
                             Cancel
                         </button>
                         <button type="submit" class="btn btn-primary">
+<!--                            <span v-if="editing">Update</span>-->
+<!--                            <span v-else>Save</span>-->
                             Save
                         </button>
                     </div>
