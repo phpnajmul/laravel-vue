@@ -58,7 +58,6 @@ class User extends Authenticatable
     {
         return Attribute::make(
             get: fn ($value) => RoleType::from($value)->name,
-
         );
     }
 
