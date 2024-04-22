@@ -54,7 +54,20 @@ class UserController extends Controller
         return response()->noContent();
     }
 
+    public function changeRole(User $user)
+    {
+        $user->update([
+           'role' => request('role'),
+        ]);
+        return response()->json(['success' => true]);
+    }
 
+    public function search()
+    {
+        $searchQuery = request('query');
+        $users = User::where('name', 'like', "%{$searchQuery}%")->get();
+        return response()->json($users);
+    }
 
 
 
